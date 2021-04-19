@@ -55,6 +55,14 @@ func DefineNotFound(code, msg string) *GoError {
 	}
 }
 
+func DefineGone(code, msg string) *GoError {
+	return &GoError{
+		Status: http.StatusGone,
+		Code:   code,
+		Msg:    msg,
+	}
+}
+
 // 5xx
 func DefineInternalServerError(code, msg string) *GoError {
 	return &GoError{
