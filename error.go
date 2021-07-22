@@ -32,8 +32,8 @@ func (e *GoError) SetTransactionId(txId string) {
 	e.TransactionId = txId
 }
 
-func EchoErrorReturn(err error, c echo.Context) {
-	log.Println("TransactionId:", err.(*GoError).TransactionId)
+func EchoErrorReturn(err error, c echo.Context, tx string) {
+	err.(*GoError).SetTransactionId(tx)
 	log.Println("CAUSE:", err.(*GoError).GetCause())
 	if err = c.JSON(err.(*GoError).Status, err.(*GoError)); err != nil {
 		panic(err)
