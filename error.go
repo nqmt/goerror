@@ -2,14 +2,17 @@ package goerror
 
 import (
 	"fmt"
+	"github.com/labstack/echo/v4"
+	"log"
 	"net/http"
 )
 
 type GoError struct {
-	Status int
-	Code   string
-	Msg    string
-	Cause  string
+	TransactionId string `json:"transactionId"`
+	Status        int    `json:"status"`
+	Code          string `json:"code"`
+	Msg           string `json:"msg"`
+	cause         string
 }
 
 func (e GoError) Error() string {
@@ -17,9 +20,24 @@ func (e GoError) Error() string {
 }
 
 func (e *GoError) WithCause(cause error) *GoError {
-	e.Cause = cause.Error()
-
+	e.cause = cause.Error()
 	return e
+}
+
+func (e *GoError) GetCause() string {
+	return fmt.Sprintf("'%s'", e.cause)
+}
+
+func (e *GoError) SetTransactionId(txId string) {
+	e.TransactionId = txId
+}
+
+func (e *GoError) EchoErrorReturn(err error, c echo.Context) {
+	log.Println("TransactionId:", err.(*GoError).TransactionId)
+	log.Println("CAUSE:", err.(*GoError).GetCause())
+	if err = c.JSON(err.(*GoError).Status, err.(*GoError)); err != nil {
+		panic(err)
+	}
 }
 
 // 4xx
