@@ -33,12 +33,10 @@ func (e *GoError) SetTransactionId(txId string) {
 }
 
 
-func EchoErrorReturn(err error, c echo.Context, tx string) {
+func EchoErrorReturn(err error, c echo.Context, tx string) error {
 	err.(*GoError).SetTransactionId(tx)
 	log.Println("CAUSE:", err.(*GoError).GetCause())
-	if err = c.JSON(err.(*GoError).Status, err.(*GoError)); err != nil {
-		panic(err)
-	}
+	return c.JSON(err.(*GoError).Status, err.(*GoError))
 }
 
 // 4xx
