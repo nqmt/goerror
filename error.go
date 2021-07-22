@@ -32,6 +32,7 @@ func (e *GoError) SetTransactionId(txId string) {
 	e.TransactionId = txId
 }
 
+
 func EchoErrorReturn(err error, c echo.Context, tx string) {
 	err.(*GoError).SetTransactionId(tx)
 	log.Println("CAUSE:", err.(*GoError).GetCause())
