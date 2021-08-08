@@ -33,10 +33,16 @@ func (e *GoError) SetTransactionId(txId string) {
 }
 
 func EchoErrorReturn(err error, c echo.Context, tx string) error {
-	err.(*GoError).SetTransactionId(tx)
-	log.Println("MESSAGE:", err.(*GoError).Error())
-	log.Println("CAUSE:", err.(*GoError).GetCause())
-	return c.JSON(err.(*GoError).Status, err.(*GoError))
+	xErr, ok := err.(*GoError)
+	if !ok {
+		log.Println("MESSAGE:", err.Error())
+		return c.JSON(http.StatusInternalServerError, "internal server error: generic error")
+	}
+
+	xErr.SetTransactionId(tx)
+	log.Println("MESSAGE:", xErr.Error())
+	log.Println("CAUSE:", xErr.GetCause())
+	return c.JSON(xErr.Status, xErr)
 }
 
 // 4xx
